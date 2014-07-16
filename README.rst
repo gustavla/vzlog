@@ -21,7 +21,7 @@ Installation
 Features
 --------
 * Logs rich content data, such as plots and images, to an HTML file.
-* Works with any plotting library that can save to file (e.g. matplotlib)
+* Works with any plotting library that can save to file (e.g. matplotlib).
 * Ability to explicitly set file permissions. This is useful if you are using
   this on a server with a restrictive umask, but you are plotting to a public
   HTML folder. No more clunky X redirection to do remote plotting.
