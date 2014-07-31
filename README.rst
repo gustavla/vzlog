@@ -31,7 +31,7 @@ Example
 Apart from commands that print text, the key command here is ``vz.impath``,
 which returns an image path. The path is at the same added to the log output::
 
-    from vzlog import default as vz
+    from vzlog.default import vz
     import matplotlib as mpl
     mpl.rc('font', size=8)
     mpl.use('Agg')
