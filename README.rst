@@ -18,6 +18,11 @@ Installation
 
     python setup.py install
 
+Documentation
+-------------
+
+* http://vzlog.readthedocs.org/
+
 Features
 --------
 * Logs rich content data, such as plots and images, to an HTML file.
