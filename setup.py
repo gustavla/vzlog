@@ -13,11 +13,12 @@ Programming Language :: Python :: 3
 """
 
 setup(name='vzlog',
-    version='0.1',
+    version='0.1.1',
     url="https://github.com/gustavla/vzlog",
     description="Python tool for logging rich content, "
                 "particularly plots and images",
     author='Gustav Larsson',
+    author_email='gustav.m.larsson@gmail.com',
     packages=[
         'vzlog',
     ],
