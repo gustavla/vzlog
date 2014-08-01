@@ -23,5 +23,4 @@ setup(name='vzlog',
     ],
     license = 'BSD',
     classifiers=[_f for _f in CLASSIFIERS.split('\n') if _f],
-    )
 )
