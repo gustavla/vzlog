@@ -213,8 +213,32 @@ class VzLog:
         self._output_surrounding_html(
             '<div>', '</div>', '<img src="{}" />'.format(fn))
 
-        self._register_filename(os.path.join(self._root, fn))
+        path = os.path.join(self._root, fn)
+        self._register_filename(path)
         # The file won't exist yet, but this can still update older files
         self._update_rights()
-        fn = os.path.join(self._root, fn)
-        return fn
+        return path
+
+    def savefig(self, fig=None):
+        """
+        Saves a matplotlib figure to the log file. This can also be done using
+        `impath`, but this will save both a SVG and a PDF version. The SVG will
+        be viewed directly in the browser next to a link to the PDF (so it can
+        be downloaded).
+        """
+        if fig is None:
+            import pylab as plt
+            fig = plt
+        base_fn = 'plot-{:04}'.format(self._counter)
+        self._counter += 1
+
+        self._output_surrounding_html(
+            '<div>', '</div>', """
+            <img src="{0}.svg" />
+            <div><a href="{0}.pdf">pdf</a></div>""".format(base_fn))
+
+        for ext in 'svg', 'pdf':
+            path = os.path.join(self._root, '{}.{}'.format(base_fn, ext))
+            self._register_filename(path)
+            fig.savefig(path)
+        self._update_rights()
