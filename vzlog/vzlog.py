@@ -47,7 +47,7 @@ class VzLog:
 
     """
     def __init__(self, path, name=None, file_rights=None):
-        self._root = path
+        self._root = os.path.abspath(path)
         if name is None:
             self._name = os.path.basename(path)
         else:
@@ -242,3 +242,6 @@ class VzLog:
             self._register_filename(path)
             fig.savefig(path)
         self._update_rights()
+
+    def __repr__(self):
+        return 'VzLog(path={!r}, counter={}, unflushed={})'.format(self._root, self._counter, len(self._filename_stack))
