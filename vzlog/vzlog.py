@@ -18,12 +18,24 @@ _HEADER = """
         font-size: 12px
     }
 
+    div {
+        display: inline-block; /* important for scaling */
+    }
+
     div.section {
         border-bottom: 2px solid gray;
     }
 
     p.title {
         text-weight: bold;
+    }
+
+    img {
+        image-rendering: optimizeSpeed;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: optimize-contrast;
+        -ms-interpolation-mode: nearest-neighbor;
     }
     </style>
 </head>
@@ -190,7 +202,7 @@ class VzLog:
         """
         self.output_with_tag('p', *args)
 
-    def impath(self, ext='png'):
+    def impath(self, ext='png', scale=1.0):
         """
         This generates a path to an image file, outputs the image and
         returns the path. Specify the extension with `ext`.
@@ -210,8 +222,12 @@ class VzLog:
         fn = 'plot-{:04}.'.format(self._counter) + ext
         self._counter += 1
 
+        if scale != 1.0:
+            scale_str = ('width="{:.2f}%" height="{:.2f}%" '
+                         .format(scale * 100.0, scale * 100.0))
+
         self._output_surrounding_html(
-            '<div>', '</div>', '<img src="{}" />'.format(fn))
+            '<div>', '</div>', '<img src="{}" {}/>'.format(fn, scale_str))
 
         path = os.path.join(self._root, fn)
         self._register_filename(path)
