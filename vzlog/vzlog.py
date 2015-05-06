@@ -18,7 +18,7 @@ _HEADER = """
         font-size: 12px
     }
 
-    div {
+    div.wrapper {
         display: inline-block; /* important for scaling */
     }
 
@@ -227,7 +227,7 @@ class VzLog:
                          .format(scale * 100.0, scale * 100.0))
 
         self._output_surrounding_html(
-            '<div>', '</div>', '<img src="{}" {}/>'.format(fn, scale_str))
+            '<div><div class="wrapper">', '</div></div>', '<img src="{}" {}/>'.format(fn, scale_str))
 
         path = os.path.join(self._root, fn)
         self._register_filename(path)
