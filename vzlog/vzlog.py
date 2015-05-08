@@ -225,6 +225,8 @@ class VzLog:
         if scale != 1.0:
             scale_str = ('width="{:.2f}%" height="{:.2f}%" '
                          .format(scale * 100.0, scale * 100.0))
+        else:
+            scale_str = ''
 
         self._output_surrounding_html(
             '<div><div class="wrapper">', '</div></div>', '<img src="{}" {}/>'.format(fn, scale_str))
