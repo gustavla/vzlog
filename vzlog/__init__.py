@@ -7,3 +7,5 @@ ISRELEASE = False
 __version__ = '{0}.{1}.{2}'.format(*VERSION)
 if not ISRELEASE:
     __version__ += '.git'
+
+__all__ = ['VzLog', '__version__']
