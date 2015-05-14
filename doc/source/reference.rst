@@ -7,7 +7,5 @@ Core
 ----
 
 .. automodule:: vzlog
-
-.. automodule:: vzlog.vzlog
    :members:
 

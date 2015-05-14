@@ -16,7 +16,7 @@ Installation
 ------------
 ::
 
-    python setup.py install
+    pip install vzlog
 
 Documentation
 -------------
