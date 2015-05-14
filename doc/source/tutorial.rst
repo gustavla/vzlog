@@ -2,8 +2,26 @@
 Tutorial
 ========
 
-The main class of this packaage is :class:`vzlog.vzlog.VzLog`, which manages an HTML
-output.
+The main class of this package is :class:`VzLog <vzlog.vzlog.VzLog>`, which
+manages an HTML output.
+
+Creating a ``VzLog`` object
+---------------------------
+
+To start a log saving to the folder `log`, construct a new object as follows::
+
+    from vzlog import VzLog
+    vz = VzLog('log')
+
+Refer to the :class:`VzLog <vzlog.vzlog.VzLog>` for outputting functions. Here
+is an example:
+
+.. literalinclude:: ../../examples/doc_example1.py
+
+With the output:
+
+.. image:: img/doc_example1.png
+
 
 Using the default ``VzLog`` object
 ----------------------------------
@@ -31,7 +49,8 @@ used::
 
     $ VZ_NAME=simple python examples/simple_test.py
 
-You can also set these up more permanently by adding them to your ``~/.bashrc``::
+You can also set these up more permanently by adding them to your
+``~/.bashrc``::
 
     export VZ_DIR=~/html
     export VZ_NAME=plot
