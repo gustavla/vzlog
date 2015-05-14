@@ -3,6 +3,9 @@ from __future__ import division, print_function, absolute_import
 import os
 import sys
 from copy import copy
+from string import Template
+from contextlib import contextmanager
+import time
 
 __all__ = ['VzLog']
 
@@ -10,7 +13,8 @@ _HEADER = """
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{title}}</title>
+    <meta charset="$encoding" />
+    <title>$title</title>
     <style>
     html {
         background: white;
@@ -42,6 +46,7 @@ _HEADER = """
 <body>
 """
 
+# Currently not used
 _FOOTER = """
 </body>
 </html>
@@ -58,7 +63,7 @@ class VzLog:
                  the document title. Inferred from `path` if set to `None`.
 
     """
-    def __init__(self, path, name=None, file_rights=None):
+    def __init__(self, path, name=None, file_rights=None, encoding='utf-8'):
         self._root = os.path.abspath(path)
         if name is None:
             self._name = os.path.basename(path)
@@ -69,6 +74,7 @@ class VzLog:
             self._file_rights = int(self._file_rights, 8)
         self._filename_stack = set()
         self._open = False
+        self._encoding = encoding
 
         self.clear()
 
@@ -76,7 +82,7 @@ class VzLog:
 
         # Make flush unnecessary to call manually
         import atexit
-        atexit.register(self.flush)
+        atexit.register(self._finalize)
 
     def _register_filename(self, fn):
         self._filename_stack.add(fn)
@@ -120,7 +126,9 @@ class VzLog:
         self._counter = 0
 
         # Output header
-        self._output_html(_HEADER.replace('{{title}}', self._name))
+        h = Template(_HEADER).substitute(title=self._name,
+                                         encoding=self._encoding)
+        self._output_html(h)
 
         with open(dot_vz_fn, 'w') as f:
             print('ok', file=f)
@@ -137,6 +145,10 @@ class VzLog:
             kwargs['file'] = f
             print(*args, **kwargs)
 
+    def _finalize(self):
+        self._output_html(_FOOTER)
+        self.flush()
+
     def flush(self):
         """
         Flushes the output. This adds a footer and updates the file rights.
@@ -144,7 +156,6 @@ class VzLog:
         useful during an interactive session when the file rights have not be
         processed yet.
         """
-        self._output_html(_FOOTER)
         self._register_filename(os.path.join(self._root, 'index.html'))
         self._update_rights()
         self._set_rights(self._root)
@@ -165,9 +176,9 @@ class VzLog:
 
     def output(self, obj):
         """
-        Outputs an object. This will look for ``obj._vzlog_output_`` and pass
+        Outputs an object. This will look for `obj._vzlog_output_` and pass
         itself along as the only argument. If the object does not have such a
-        function, it will fall back to `VzLog.log`.
+        function, it will fall back to calling `VzLog.log`.
         """
 
         if hasattr(obj, '_vzlog_output_'):
@@ -178,7 +189,10 @@ class VzLog:
 
     def log(self, *args, **kwargs):
         """
-        Logs text with mono-spaced font (<pre>).
+        Logs text with mono-spaced font (``<pre>``). This function and many other
+        text outputting functions uses the same arguments as the built-in
+        `print` function. The only difference is that will ignore ``file`` if
+        specified.
 
         >>> vz.log('Logging a value', 100)
         """
@@ -186,21 +200,61 @@ class VzLog:
 
     def title(self, *args, **kwargs):
         """
-        Adds a title (<h1>).
+        Adds a title (``<h1>``). See `log` for arguments.
         """
         self.output_with_tag('h1', *args, **kwargs)
 
     def section(self, *args, **kwargs):
         """
-        Adds a section title (<h2>).
+        Adds a section title (``<h2>``). See `log` for arguments.
         """
         self.output_with_tag('h2', *args, **kwargs)
 
     def text(self, *args, **kwargs):
         """
-        Adds a paragraph of text (<p>).
+        Adds a paragraph of text (``<p>``). See `log` for arguments.
         """
         self.output_with_tag('p', *args)
+
+    def items(self, items, style='bullets'):
+        """
+        Outputs an item list.
+
+        :param items: Iterable of representable objects. If an item is a list,
+                      it will call itself recursively.
+        :param style: List style: ``'bullets'`` or ``'numbers'``. Use a
+                      list/tuple of values if you want different levels to have
+                      different styles.
+        """
+        if isinstance(style, (list, tuple)) and style:
+            st = style[0]
+            if len(style) > 1:
+                next_style = style[1:]
+            else:
+                next_style = st
+        else:
+            st = style
+            next_style = style
+
+        if st == 'bullets':
+            open_tag = '<ul>'
+            close_tag = '</ul>'
+        elif st == 'numbers':
+            open_tag = '<ol>'
+            close_tag = '</ol>'
+        else:
+            raise ValueError('Unknown list style')
+
+        self._output_html(open_tag)
+        for item in items:
+            if isinstance(item, list):
+                self.items(item, style=next_style)
+            else:
+                self.output_with_tag('li', item)
+        self._output_html(close_tag)
+
+        #self._output_surrounding_html('<ul>', '</ul>',
+                #''.join('<li>{}</li>'.format(item) for item in items))
 
     def impath(self, ext='png', scale=1.0):
         """
@@ -215,9 +269,15 @@ class VzLog:
 
         Or with matplotlib using a vector format:
 
-        >>> plt.figure()
-        >>> plt.plot([1,3,2,3,1])
-        >>> plt.savefig(vz.impath(ext='svg'))
+        >>> import pylab as pl
+        >>> pl.figure()
+        >>> pl.plot([1,3,2,3,1])
+        >>> pl.savefig(vz.impath(ext='svg'))
+
+        :param ext:     Extension of image file.
+        :param scale:   Scale of image when viewed in the browser. This will
+                        use nearest neigbhor upscaling that works well with
+                        pixel grids (if your browser supports it).
         """
         fn = 'plot-{:04}.'.format(self._counter) + ext
         self._counter += 1
@@ -243,10 +303,13 @@ class VzLog:
         `impath`, but this will save both a SVG and a PDF version. The SVG will
         be viewed directly in the browser next to a link to the PDF (so it can
         be downloaded).
+
+        :param fig: If specified, this should a matplotlib figure object that
+                    ``fig.savefig`` will be called on.
         """
         if fig is None:
-            import pylab as plt
-            fig = plt
+            import pylab as pl
+            fig = pl
         base_fn = 'plot-{:04}'.format(self._counter)
         self._counter += 1
 
@@ -262,4 +325,24 @@ class VzLog:
         self._update_rights()
 
     def __repr__(self):
-        return 'VzLog(path={!r}, counter={}, unflushed={})'.format(self._root, self._counter, len(self._filename_stack))
+        return 'VzLog(path={!r}, counter={}, unflushed={})'.format(
+                self._root, self._counter, len(self._filename_stack))
+
+    @contextmanager
+    def timed(self, name=None):
+        """
+        Context manager to make it easy to time the execution of a piece of
+        code. This timer will never run your code several times and is meant
+        for simple in-production timing, instead of benchmarking.
+
+        >>> with vz.timed('Sleep'):
+        ...     time.sleep(1)
+
+        :param name: Name of the timing block, to identify it.
+        """
+        start = time.time()
+        yield
+        end = time.time()
+        delta = end - start
+        name_str = '' if name is None else '{}: '.format(name)
+        self.text(('<span class="timed">[<span>Timed</span>]</span> {0}{1:.2f} s'.format(name_str, delta)))
