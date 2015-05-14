@@ -8,7 +8,7 @@ import numpy as np
 vz = VzLog('log')
 
 vz.title('VzLog')
-vz.text(u'Goals'.encode('utf-8'))
+vz.text('Goals')
 vz.items(['Rich logging', 'Avoid annoying pop-up windows'])
 
 vz.section('A plot')
