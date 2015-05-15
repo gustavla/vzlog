@@ -276,7 +276,7 @@ class VzLog:
 
         :param ext:     Extension of image file.
         :param scale:   Scale of image when viewed in the browser. This will
-                        use nearest neigbhor upscaling that works well with
+                        use nearest neighbor upscaling that works well with
                         pixel grids (if your browser supports it).
         """
         fn = 'plot-{:04}.'.format(self._counter) + ext
