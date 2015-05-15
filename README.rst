@@ -39,17 +39,19 @@ which returns an image path. The path is at the same added to the log output:
 .. code:: python
 
     from vzlog import VzLog
-    import matplotlib as mpl
-    mpl.rc('font', size=8)
-    mpl.use('Agg')
-    import matplotlib.pylab as plt
-
+    
     vz = VzLog('mylog')
     vz.title('Plots')
     vz.section('Silly plot')
 
     x = [1,2,3,1,2,3]
-    vz.log('x = ', x)
+    vz.log('x =', x)
+
+    # Plot directly to the vzlog file
+    import matplotlib as mpl
+    mpl.rc('font', size=8)
+    mpl.use('Agg')
+    import matplotlib.pylab as plt
 
     plt.figure(figsize=(4, 4))
     plt.plot(x)
