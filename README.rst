@@ -1,12 +1,12 @@
 vzlog
 =====
 
-Tool for logging rich content, particularly plots and images. It has two main
+Tool for logging rich content to an HTML file. It has two main
 advantages over interactive logging:
 
 * You can run experiments with loads of output, without having to be halted by
   an interactive plot. If you solve this by dumping plots to individual images,
-  you might want to test vzlog instead, since it can seamlessly integrate text
+  you might want to try vzlog instead, since it can seamlessly integrate text
   and images.
 * If you often work remotely from a computer with a public HTML directory (such
   as a University account), you can plot directly to that directory. VzLog can
@@ -18,11 +18,11 @@ Installation
 
     pip install vzlog
 
-Documentation
--------------
+Documentation |doc|
+-------------------
 
-* http://vzlog.readthedocs.org/
-
+* http://vzlog.readthedocs.org/ 
+  
 Features
 --------
 * Logs rich content data, such as plots and images, to an HTML file.
@@ -34,14 +34,17 @@ Features
 Example
 -------
 Apart from commands that print text, the key command here is ``vz.impath``,
-which returns an image path. The path is at the same added to the log output::
+which returns an image path. The path is at the same added to the log output:
 
-    from vzlog.default import vz
+.. code:: python
+
+    from vzlog import VzLog
     import matplotlib as mpl
     mpl.rc('font', size=8)
     mpl.use('Agg')
     import matplotlib.pylab as plt
 
+    vz = VzLog('mylog')
     vz.title('Plots')
     vz.section('Silly plot')
 
@@ -51,3 +54,8 @@ which returns an image path. The path is at the same added to the log output::
     plt.figure(figsize=(4, 4))
     plt.plot(x)
     plt.savefig(vz.impath('svg'))
+
+.. |doc| image:: https://readthedocs.org/projects/vzlog/badge/?version=latest 
+         :target: https://readthedocs.org/projects/vzlog/?badge=latest 
+         :alt: Documentation Status
+
