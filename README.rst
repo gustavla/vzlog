@@ -34,7 +34,7 @@ Features
 Example
 -------
 Apart from commands that print text, the key command here is ``vz.impath``,
-which returns an image path. The path is at the same added to the log output:
+which returns an image path. The path is at the same time added to the log output:
 
 .. code:: python
 
