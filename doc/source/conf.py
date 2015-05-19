@@ -51,7 +51,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'vzlog'
-copyright = '2014, Gustav Larsson'
+copyright = '2015, Gustav Larsson'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
