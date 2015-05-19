@@ -340,9 +340,9 @@ class VzLog:
 
         :param name: Name of the timing block, to identify it.
         """
-        start = time.time()
+        start = time.clock()
         yield
-        end = time.time()
+        end = time.clock()
         delta = end - start
         name_str = '' if name is None else '{}: '.format(name)
         self.text(('<span class="timed">[<span>Timed</span>]</span> {0}{1:.2f} s'.format(name_str, delta)))
