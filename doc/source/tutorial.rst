@@ -18,7 +18,7 @@ is an example:
 
 .. literalinclude:: ../../examples/doc_example1.py
 
-With the output:
+With the output saved to ``log/index.html``:
 
 .. image:: img/doc_example1.png
 
@@ -59,3 +59,19 @@ You can also set these up more permanently by adding them to your
 In this example, your document file will be placed in
 ``~/html/plot/index.html`` and the file rights 0775 mean that user/group can
 read, write and execute and the rest can read and execute.
+
+Plotting with matplotlib
+------------------------
+When you are plotting directly to file, you want to tell matplotlib not to
+start an interactive session. You can do this as follows::
+
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+
+Since this is such a common use case in vzlog, the following short-hand will do
+this automatically::
+
+    import vzlog.pyplot as plt
+
+This will also tweak the rendering style.

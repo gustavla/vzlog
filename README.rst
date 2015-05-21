@@ -1,8 +1,8 @@
 vzlog
 =====
 
-Tool for logging rich content to an HTML file. It has two main
-advantages over interactive logging:
+Tool for logging rich content to an HTML file. It has two main advantages over
+interactive logging:
 
 * You can run experiments with loads of output, without having to be halted by
   an interactive plot. If you solve this by dumping plots to individual images,
@@ -34,12 +34,13 @@ Features
 Example
 -------
 Apart from commands that print text, the key command here is ``vz.impath``,
-which returns an image path. The path is at the same time added to the log output:
+which returns an image path. The path is at the same time added to the log
+output:
 
 .. code:: python
 
     from vzlog import VzLog
-    
+
     vz = VzLog('mylog')
     vz.title('Plots')
     vz.section('Silly plot')
