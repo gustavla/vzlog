@@ -2,7 +2,7 @@
 Tutorial
 ========
 
-The main class of this package is :class:`VzLog <vzlog.vzlog.VzLog>`, which
+The main class of this package is :class:`VzLog <vzlog.VzLog>`, which
 manages an HTML output.
 
 Creating a ``VzLog`` object
@@ -13,7 +13,7 @@ To start a log saving to the folder `log`, construct a new object as follows::
     from vzlog import VzLog
     vz = VzLog('log')
 
-Refer to the :class:`VzLog <vzlog.vzlog.VzLog>` for outputting functions. Here
+Refer to the :class:`VzLog <vzlog.VzLog>` for outputting functions. Here
 is an example:
 
 .. literalinclude:: ../../examples/doc_example1.py
