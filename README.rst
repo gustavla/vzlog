@@ -49,7 +49,7 @@ output:
     vz.log('x =', x)
 
     # Plot directly to the vzlog file
-    import vzlog.pylab as plt
+    import vzlog.pyplot as plt
 
     plt.figure(figsize=(4, 4))
     plt.plot(x)
