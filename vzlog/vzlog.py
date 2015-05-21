@@ -151,10 +151,10 @@ class VzLog:
 
     def flush(self):
         """
-        Flushes the output. This adds a footer and updates the file rights.
-        Normally, you do not need to call this yourself. However, it can be
-        useful during an interactive session when the file rights have not be
-        processed yet.
+        Flushes the output. This mainly updates the file rights for newly added
+        files. Normally, you do not need to call this yourself. However, it can
+        be useful during an interactive session when the file rights have not
+        be processed yet.
         """
         self._register_filename(os.path.join(self._root, 'index.html'))
         self._update_rights()
