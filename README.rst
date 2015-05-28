@@ -22,7 +22,7 @@ Documentation |doc|
 -------------------
 
 * http://vzlog.readthedocs.org/ 
-  
+
 Features
 --------
 * Logs rich content data, such as plots and images, to an HTML file.
@@ -45,7 +45,7 @@ output:
     vz.title('Plots')
     vz.section('Silly plot')
 
-    x = [1,2,3,1,2,3]
+    x = [1, 2, 3, 1, 2, 3]
     vz.log('x =', x)
 
     # Plot directly to the vzlog file
