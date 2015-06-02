@@ -333,16 +333,17 @@ class VzLog:
         """
         Context manager to make it easy to time the execution of a piece of
         code. This timer will never run your code several times and is meant
-        for simple in-production timing, instead of benchmarking.
+        for simple in-production timing, instead of benchmarking. It measure
+        wall-clock time.
 
         >>> with vz.timed('Sleep'):
         ...     time.sleep(1)
 
         :param name: Name of the timing block, to identify it.
         """
-        start = time.clock()
+        start = time.time()
         yield
-        end = time.clock()
+        end = time.time()
         delta = end - start
         name_str = '' if name is None else '{}: '.format(name)
         self.text(('<span class="timed">[<span>Timed</span>]</span> {0}{1:.2f} s'.format(name_str, delta)))
