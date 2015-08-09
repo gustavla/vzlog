@@ -3,9 +3,8 @@
 API Reference
 =============
 
-Core
-----
+.. toctree::
+  :maxdepth: 2
 
-.. automodule:: vzlog
-   :members:
-
+  api_vzlog_class
+  api_image
