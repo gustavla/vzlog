@@ -3,6 +3,21 @@ from __future__ import division, print_function, absolute_import
 
 from setuptools import setup
 
+try:
+    # This makes it installable without cython/numpy
+    # (useful for building the documentation)
+    import numpy as np
+    from Cython.Build import cythonize
+    with open('requirements.txt') as f:
+        required = f.read().splitlines()
+
+    compile_ext = True
+except ImportError:
+    with open('requirements_docs.txt') as f:
+        required = f.read().splitlines()
+
+    compile_ext = False
+
 CLASSIFIERS = [
     'Development Status :: 2 - Pre-Alpha',
     'Intended Audience :: Science/Research',
@@ -13,10 +28,7 @@ CLASSIFIERS = [
     'Programming Language :: Python :: 3',
 ]
 
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
-
-setup(
+args = dict(
     name='vzlog',
     version='0.1.4',
     url="https://github.com/gustavla/vzlog",
@@ -27,7 +39,15 @@ setup(
     install_requires=required,
     packages=[
         'vzlog',
+        'vzlog.image',
     ],
     license='BSD',
     classifiers=CLASSIFIERS,
 )
+
+if compile_ext:
+    setup_requires=['numpy', 'cython'],
+    args['ext_modules'] = cythonize("vzlog/image/resample.pyx")
+    args['include_dirs'] = [np.get_include()]
+
+setup(**args)
