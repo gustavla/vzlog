@@ -39,9 +39,9 @@ output:
 
 .. code:: python
 
-    from vzlog import VzLog
+    import vzlog
 
-    vz = VzLog('mylog')
+    vz = vzlog.VzLog('mylog')
     vz.title('Plots')
     vz.section('Silly plot')
 

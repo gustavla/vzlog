@@ -1,8 +1,8 @@
-from vzlog import VzLog
+import vzlog
 import vzlog.pyplot as plt
 import numpy as np
 
-vz = VzLog('log')
+vz = vzlog.VzLog('log')
 
 vz.title('VzLog')
 vz.text('Goals')

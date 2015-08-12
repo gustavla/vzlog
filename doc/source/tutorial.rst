@@ -10,8 +10,8 @@ Creating a ``VzLog`` object
 
 To start a log saving to the folder `log`, construct a new object as follows::
 
-    from vzlog import VzLog
-    vz = VzLog('log')
+    import vzlog
+    vz = vzlog.VzLog('log')
 
 Refer to the :class:`VzLog <vzlog.VzLog>` for outputting functions. Here
 is an example:
