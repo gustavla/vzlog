@@ -4,7 +4,7 @@ from vzlog.vzlog import VzLog
 from vzlog import image
 
 VERSION = (0, 1, 4)
-ISRELEASE = False
+ISRELEASE = True
 __version__ = '{0}.{1}.{2}'.format(*VERSION)
 if not ISRELEASE:
     __version__ += '.git'
