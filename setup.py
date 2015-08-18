@@ -30,7 +30,7 @@ CLASSIFIERS = [
 
 args = dict(
     name='vzlog',
-    version='0.1.4',
+    version='0.1.5',
     url="https://github.com/gustavla/vzlog",
     description=("Python tool for logging rich content, "
                  "particularly plots and images"),
