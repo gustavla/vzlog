@@ -2,11 +2,18 @@
 from __future__ import division, print_function, absolute_import
 
 from setuptools import setup
+import os
 
-import numpy as np
-from Cython.Build import cythonize
-with open('requirements.txt') as f:
-    required = f.read().splitlines()
+if os.getenv('READTHEDOCS'):
+    with open('requirements_docs.txt') as f:
+        required = f.read().splitlines()
+    compile_ext = False
+else:
+    import numpy as np
+    from Cython.Build import cythonize
+    with open('requirements.txt') as f:
+        required = f.read().splitlines()
+    compile_ext = True
 
 CLASSIFIERS = [
     'Development Status :: 2 - Pre-Alpha',
@@ -35,8 +42,9 @@ args = dict(
     classifiers=CLASSIFIERS,
 )
 
-setup_requires=['numpy', 'cython'],
-args['ext_modules'] = cythonize("vzlog/image/resample.pyx")
-args['include_dirs'] = [np.get_include()]
+if compile_ext:
+    args['setup_requires'] = ['numpy', 'cython']
+    args['ext_modules'] = cythonize("vzlog/image/resample.pyx")
+    args['include_dirs'] = [np.get_include()]
 
 setup(**args)
