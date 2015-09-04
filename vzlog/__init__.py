@@ -3,8 +3,8 @@ from __future__ import division, print_function, absolute_import
 from vzlog.vzlog import VzLog
 from vzlog import image
 
-VERSION = (0, 1, 7)
-ISRELEASE = True
+VERSION = (0, 1, 8)
+ISRELEASE = False
 __version__ = '{0}.{1}.{2}'.format(*VERSION)
 if not ISRELEASE:
     __version__ += '.git'
