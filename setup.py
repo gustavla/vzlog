@@ -3,20 +3,10 @@ from __future__ import division, print_function, absolute_import
 
 from setuptools import setup
 
-try:
-    # This makes it installable without cython/numpy
-    # (useful for building the documentation)
-    import numpy as np
-    from Cython.Build import cythonize
-    with open('requirements.txt') as f:
-        required = f.read().splitlines()
-
-    compile_ext = True
-except ImportError:
-    with open('requirements_docs.txt') as f:
-        required = f.read().splitlines()
-
-    compile_ext = False
+import numpy as np
+from Cython.Build import cythonize
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
 
 CLASSIFIERS = [
     'Development Status :: 2 - Pre-Alpha',
@@ -45,9 +35,8 @@ args = dict(
     classifiers=CLASSIFIERS,
 )
 
-if compile_ext:
-    setup_requires=['numpy', 'cython'],
-    args['ext_modules'] = cythonize("vzlog/image/resample.pyx")
-    args['include_dirs'] = [np.get_include()]
+setup_requires=['numpy', 'cython'],
+args['ext_modules'] = cythonize("vzlog/image/resample.pyx")
+args['include_dirs'] = [np.get_include()]
 
 setup(**args)
