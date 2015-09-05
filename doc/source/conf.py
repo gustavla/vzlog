@@ -14,7 +14,6 @@
 # serve to show the default.
 
 import sys
-import os
 
 try:
     from unittest.mock import MagicMock
@@ -50,7 +49,7 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.coverage',
     'sphinx.ext.mathjax',
-    'sphinxcontrib.napoleon'
+    'sphinx.ext.napoleon',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
