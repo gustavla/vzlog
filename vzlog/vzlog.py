@@ -84,6 +84,15 @@ class VzLog:
         import atexit
         atexit.register(self._finalize)
 
+    @property
+    def name(self):
+        """Name of the log"""
+        return self._name
+
+    def path(self):
+        """Absolute path of the log"""
+        return self._root
+
     def _register_filename(self, fn):
         self._filename_stack.add(fn)
 
