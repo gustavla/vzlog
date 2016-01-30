@@ -1,17 +1,6 @@
 from __future__ import division, print_function, absolute_import
 import numpy as np
 
-# If skimage is available, the image returned will be wrapped
-# in the Image class. This is nice since it will be automatically
-# displayed in an IPython notebook.
-def _load_image_class():
-    try:
-        from skimage.io import Image
-    except ImportError:
-        def Image(x):
-            return x
-    return Image
-
 
 class ImageGrid(object):
     """
@@ -146,6 +135,8 @@ class ImageGrid(object):
             self.set_image(data[i], i // cols, i % cols,
                            cmap=cmap, vmin=vmin, vmax=vmax, vsym=vsym)
 
+        self._display_scale = 1
+
     @classmethod
     def _prepare_color(self, color):
         if color is None:
@@ -160,8 +151,7 @@ class ImageGrid(object):
         """
         Returns the image as a skimage.io.Image class.
         """
-        Image = _load_image_class()
-        return Image(self._data)
+        return self._data
 
     def set_image(self, image, row, col, cmap=None, vmin=None, vmax=None,
                   vsym=False):
@@ -288,8 +278,7 @@ class ImageGrid(object):
             from skimage.transform import resize
             data = resize(self._data, tuple([self._data.shape[i] * scale
                                              for i in range(2)]), order=0)
-            Image = _load_image_class()
-            return Image(data)
+            return data
 
     def save(self, path, scale=1):
         """
@@ -307,6 +296,33 @@ class ImageGrid(object):
         data = self.scaled_image(scale)
         pil_im = Image.fromarray((data*255).astype(np.uint8))
         pil_im.save(path)
+
+    def scaled(self, scale=1):
+        """
+        Change the display size of the grid. This is useful in for instance
+        an IPython notebook session.
+
+        Parameters
+        ----------
+        scale : integer
+            Scale factor.
+
+        Returns
+        -------
+        self : ImageGrid
+            Returns self
+        """
+        self._display_scale = scale
+        return self
+
+    def _repr_png_(self):
+        from PIL import Image
+        from io import BytesIO
+        data = self.scaled_image(self._display_scale)
+        pil_im = Image.fromarray((data*255).astype(np.uint8))
+        b = BytesIO()
+        pil_im.save(b, format='png')
+        return b.getvalue()
 
     def __repr__(self):
         return 'ImageGrid(rows={rows}, cols={cols}, shape={shape})'.format(
