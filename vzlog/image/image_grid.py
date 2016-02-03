@@ -290,6 +290,12 @@ class ImageGrid(object):
                                              for i in range(2)]), order=0)
             return data
 
+    def pil_image(self, scale=1):
+        from PIL import Image
+        data = self.scaled_image(scale)
+        pil_im = Image.fromarray((data*255).astype(np.uint8))
+        return pil_im
+
     def save(self, path, scale=1):
         """
         Save the image to file.
@@ -302,10 +308,7 @@ class ImageGrid(object):
             Upscaling using nearest neighbor, e.g. a scale of 5 will make each
             pixel a 5x5 rectangle in the output.
         """
-        from PIL import Image
-        data = self.scaled_image(scale)
-        pil_im = Image.fromarray((data*255).astype(np.uint8))
-        pil_im.save(path)
+        self.pil_image(scale=scale).save(path)
 
     def scaled(self, scale=1):
         """
