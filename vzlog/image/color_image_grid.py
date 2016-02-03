@@ -34,8 +34,10 @@ class ColorImageGrid(object):
         Specify the border color as an array of length 3 (RGB). If a scalar is
         given, it will be interpreted as the grayscale value.
     border_width :
-        Border with in pixels. If you rescale the image, the border will be
-        rescaled with it.
+        Border width in pixels. If you rescale the image, the border will be
+        rescaled with it. The default behavior (`border_width = None`) is that
+        no width will be used when a single image is visualized, while a
+        default width of 1 is used for multiple.
     cmap/vmin/vmax/vsym :
         See `ImageGrid.set_image`.
     global_bounds : bool
@@ -47,11 +49,13 @@ class ColorImageGrid(object):
         `vsym` set the same.
     """
     def __init__(self, data=None, rows=None, cols=None, shape=None,
-                 border_color=1, border_width=1, vmin=0.0,
+                 border_color=1, border_width=None, vmin=0.0,
                  vmax=1.0, vsym=False, global_bounds=True):
 
-        assert data is None or (np.ndim(data) in (3, 4, 5) and
-                                data.shape[-1] <= 3)
+        assert (data is None or
+                len(data) == 0 or
+                (np.ndim(data[0]) in (2, 3, 4) and data[0].shape[-1] <= 3))
+
         if data is not None:
             data = np.asanyarray(data)
 
@@ -91,7 +95,14 @@ class ColorImageGrid(object):
         self._rows = rows
         self._cols = cols
         self._shape = shape
-        self._border = border_width
+        if border_width is None:
+            # Set to 1 if multiple images, or 0 if single image
+            if rows == 1 and cols == 1:
+                self._border = 0
+            else:
+                self._border = 1
+        else:
+            self._border = border_width
 
         b = self._border
         self._fullsize = (b + (shape[0] + b) * self._rows,
