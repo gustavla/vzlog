@@ -6,6 +6,8 @@ from copy import copy
 from string import Template
 from contextlib import contextmanager
 import time
+from io import StringIO
+from collections import OrderedDict
 
 __all__ = ['VzLog']
 
@@ -42,6 +44,9 @@ _HEADER = """
         -ms-interpolation-mode: nearest-neighbor;
     }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
 </head>
 <body>
 """
@@ -75,7 +80,7 @@ class VzLog:
         self._filename_stack = set()
         self._open = False
         self._encoding = encoding
-
+        self._main_file = None
         self.clear()
 
         self._counter = 0
@@ -89,9 +94,15 @@ class VzLog:
         """Name of the log"""
         return self._name
 
+    @property
     def path(self):
         """Absolute path of the log"""
         return self._root
+
+    def open_main_file(self):
+        self._main_file = open(os.path.join(self._root, 'index.html'), 'w')
+        self._cur_file = self._main_file
+        self._tabs = None
 
     def _register_filename(self, fn):
         self._filename_stack.add(fn)
@@ -115,6 +126,9 @@ class VzLog:
         # Construct path.
         dot_vz_fn = os.path.join(self._root, '.vz')
 
+        if self._main_file:
+            self._main_file.close()
+
         # First, remove previous folder. Only do this if it looks like
         # it was previously created with vz. Otherwise, throw an error.
         if os.path.isdir(self._root):
@@ -126,10 +140,10 @@ class VzLog:
             else:
                 raise Exception("Folder does not seem to be a vz folder.")
 
-        self._open = True
-
         # Create folder
         os.mkdir(self._root)
+
+        self.open_main_file()
 
         # Reset counter
         self._counter = 0
@@ -143,20 +157,23 @@ class VzLog:
             print('ok', file=f)
 
     def _output_surrounding_html(self, prefix, suffix, *args, **kwargs):
-        with open(os.path.join(self._root, 'index.html'), 'a') as f:
-            kwargs['file'] = f
-            print(prefix, file=f)
-            print(*args, **kwargs)
-            print(suffix, file=f)
+            #with open(os.path.join(self._root, 'index.html'), 'a') as f:
+        kwargs['file'] = self._cur_file
+        print(prefix, file=self._cur_file)
+        print(*args, **kwargs)
+        print(suffix, file=self._cur_file)
 
     def _output_html(self, *args, **kwargs):
-        with open(os.path.join(self._root, 'index.html'), 'a') as f:
-            kwargs['file'] = f
-            print(*args, **kwargs)
+        #with open(os.path.join(self._root, 'index.html'), 'a') as f:
+        kwargs['file'] = self._cur_file
+        print(*args, **kwargs)
 
     def _finalize(self):
         self._output_html(_FOOTER)
         self.flush()
+        if self._main_file:
+            self._main_file.close()
+            self._main_file = None
 
     def flush(self):
         """
@@ -332,6 +349,50 @@ class VzLog:
             self._register_filename(path)
             fig.savefig(path)
         self._update_rights()
+
+    def tab(self, name):
+        if self._tabs is None:
+            self._tabs = OrderedDict()
+
+        if name in self._tabs:
+            self._cur_file = self._tabs[name]
+        else:
+            fp = StringIO()
+            self._tabs[name] = fp
+            self._cur_file = fp
+
+    def finalize_tabs(self):
+        assert self._tabs is not None
+        self._cur_file = self._main_file
+
+        self._output_html('<div class="tabs" id="tabs">')
+
+        # Print links
+        self._output_html('<ul>')
+        for no, (name, tab) in enumerate(self._tabs.items()):
+            self._output_html('<li><a href="#tabs-{no}">{name}</a></li>'.format(no=no+1, name=name))
+        self._output_html('</ul>')
+
+        # Output tab divs
+        for no, (name, tab) in enumerate(self._tabs.items()):
+            self._output_html('<div class="tab" id="tabs-{}">'.format(no+1))
+
+            self._output_html(tab.getvalue())
+            tab.close()
+
+            self._output_html('</div>')
+
+        self._output_html('</div>')
+        self._output_html('''
+          <script>
+          $(function() {
+            $("#tabs").tabs();
+          });
+          </script>
+        ''')
+
+        self._tabs = None
+
 
     def __repr__(self):
         return 'VzLog(path={!r}, counter={}, unflushed={})'.format(
