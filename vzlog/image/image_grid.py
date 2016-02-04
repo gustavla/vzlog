@@ -192,7 +192,11 @@ class ImageGrid(object):
         from vzlog.image.resample import resample_and_arrange_image
 
         if cmap is None:
-            cmap = cm.gray
+            if vsym:
+                # Pick a default that is white exactly at 0
+                cmap = cm.RdBu_r
+            else:
+                cmap = cm.gray
         if vmin is None:
             vmin = np.nanmin(image)
         if vmax is None:
