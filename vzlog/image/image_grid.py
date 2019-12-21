@@ -231,8 +231,8 @@ class ImageGrid(object):
         anchor = (self._border + row * (self._shape[0] + self._border),
                   self._border + col * (self._shape[1] + self._border))
 
-        selection = [slice(anchor[0], anchor[0] + rgb.shape[0]),
-                     slice(anchor[1], anchor[1] + rgb.shape[1])]
+        selection = (slice(anchor[0], anchor[0] + rgb.shape[0]),
+                     slice(anchor[1], anchor[1] + rgb.shape[1]))
 
         nan_data = np.isnan(rgb)
         rgb[nan_data] = 0.0
@@ -264,7 +264,7 @@ class ImageGrid(object):
             r0 = (self._border + self._shape[0]) * r
             c0 = (self._border + self._shape[1]) * c
 
-            sel = [slice(r0, r0+M.shape[0]), slice(c0, c0+M.shape[1])]
+            sel = (slice(r0, r0+M.shape[0]), slice(c0, c0+M.shape[1]))
 
             self._data[sel] = M * color + ~M * self._data[sel]
 
